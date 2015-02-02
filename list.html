@@ -1,0 +1,61 @@
+<html>
+    <head>
+        <title></title>
+        <script type="text/javascript" src="bower_components/angular/angular.min.js"></script>
+        
+    </head>
+    <body>
+        <div ng-app="myApp">
+            <div ng-controller="personController">
+                <table>
+                    <tr>
+                        <th>Name</th>
+                        <th>Text</th>
+                        <th>Origin</th>
+                        <th>Segmentation</th>
+                        <th>Salient</th>
+                        <th>Border</th>
+                        <th>Turn</th>
+                        <th>Denoise</th>
+                        <th>Deskew</th>
+                        <th>Binarization</th>
+                    </tr>
+                    <tr ng-repeat="x in testcase">
+                        <td>{{ x.name }}</td>
+                        <td>{{ x.text }}</td>
+                        <td><img src="{{ x.origin }}"></td>
+                        <td><img src="{{ x.seg }}"></td>
+                        <td><img src="{{ x.salient }}"></td>
+                        <td><img src="{{ x.border }}"></td>
+                        <td><img src="{{ x.turn }}"></td>
+                        <td><img src="{{ x.denoise }}"></td>
+                        <td><img src="{{ x.deskew }}"></td>
+                        <td><img src="{{ x.binarization }}"></td>
+                    </tr>
+                </table>
+
+            </div>
+        </div>
+        <script type="text/javascript">
+            var myApp = angular.module("myApp", []);
+            myApp.controller('personController', function ($scope, $http) {
+                $http.get("/find").success(function(res){
+                    $scope.testcase = res.testcase;
+                }).error(function(err){
+                    $scope.testcase = [{
+                        'name': '123',
+                        'origin': '123',
+                        'seg': '123',
+                        'salient': '123',
+                        'border': '123',
+                        'turn': '123',
+                        'denoise': '123',
+                        'deskew': '123',
+                        'binarization': '123',
+                        'text':'123'
+                    }];
+                });
+            });
+        </script>
+    </body>
+</html>
