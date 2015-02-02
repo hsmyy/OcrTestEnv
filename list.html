@@ -2,48 +2,49 @@
     <head>
         <title></title>
         <script type="text/javascript" src="bower_components/angular/angular.min.js"></script>
-        
+        <script type="text/javascript" src="bower_components/ng-table/dist/ng-table.min.js"></script>
+        <link rel="stylesheet" href="bower_components/ng-table/dist/ng-table.min.css"></link>
     </head>
     <body>\
         <a href="/">Upload</a>
         <div ng-app="myApp">
             <div ng-controller="personController">
-                <table>
-                    <tr>
-                        <th>Name</th>
-                        <th>Text</th>
-                        <th>Origin</th>
-                        <th>Segmentation</th>
-                        <th>Salient</th>
-                        <th>Border</th>
-                        <th>Turn</th>
-                        <th>Denoise</th>
-                        <th>Deskew</th>
-                        <th>Binarization</th>
-                    </tr>
-                    <tr ng-repeat="x in testcase">
-                        <td>{{ x.name }}</td>
-                        <td>{{ x.text }}</td>
-                        <td><img src="{{ x.origin }}" width="350" height="350"></td>
-                        <td><img src="{{ x.seg }}" width="350" height="350"></td>
-                        <td><img src="{{ x.salient }}" width="350" height="350"></td>
-                        <td><img src="{{ x.border }}" width="350" height="350"></td>
-                        <td><img src="{{ x.turn }}" width="350" height="350"></td>
-                        <td><img src="{{ x.denoise }}" width="350" height="350"></td>
-                        <td><img src="{{ x.deskew }}" width="350" height="350"></td>
-                        <td><img src="{{ x.binarization }}" width="350" height="350"></td>
+                <table ng-table="tableParams" class="table">
+                    <tr ng-repeat="x in $data">
+                        <td data-title="'Name'">{{ x.name }}</td>
+                        <td data-title="'Text'">{{ x.text }}</td>
+                        <td data-title="'Origin'"><img src="{{ x.origin }}" width="350" height="350"></td>
+                        <td data-title="'Segmentation'"><img src="{{ x.seg }}" width="350" height="350"></td>
+                        <td data-title="'Salient'"><img src="{{ x.salient }}" width="350" height="350"></td>
+                        <td data-title="'Border'"><img src="{{ x.border }}" width="350" height="350"></td>
+                        <td data-title="'Turn'"><img src="{{ x.turn }}" width="350" height="350"></td>
+                        <td data-title="'Denoise'"><img src="{{ x.denoise }}" width="350" height="350"></td>
+                        <td data-title="'Deskew'"><img src="{{ x.deskew }}" width="350" height="350"></td>
+                        <td data-title="'Binarization'"><img src="{{ x.binarization }}" width="350" height="350"></td>
                     </tr>
                 </table>
+                
 
             </div>
         </div>
         <script type="text/javascript">
-            var myApp = angular.module("myApp", []);
-            myApp.controller('personController', function ($scope, $http) {
+            var myApp = angular.module("myApp", ['ngTable']);
+            myApp.controller('personController', function ($scope, $http, ngTableParams) {
+                var data;
                 $http.get("/find").success(function(res){
-                    $scope.testcase = res.testcase;
+                    data = res.testcase;
+                    $scope.tableParams = new ngTableParams({
+                        page: 1,
+                        count: 10
+                    }, {
+                        total: data.length,
+                        getData: function($defer, params){
+                            $defer.resolve(data.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+                        }
+                    });
+
                 }).error(function(err){
-                    $scope.testcase = [{
+                    data = [{
                         'name': '123',
                         'origin': '123',
                         'seg': '123',
@@ -55,6 +56,15 @@
                         'binarization': '123',
                         'text':'123'
                     }];
+                    $scope.tableParams = new ngTableParams({
+                        page: 1,
+                        count: 10
+                    }, {
+                        total: data.length,
+                        getData: function($defer, params){
+                            $defer.resolve(data.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+                        }
+                    });
                 });
             });
         </script>
