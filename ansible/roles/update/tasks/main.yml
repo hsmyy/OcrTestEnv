@@ -1,0 +1,12 @@
+---
+#
+
+- name: update_git
+  - git: repo=  dest=  update=yes
+
+- name: compile
+  - shell:
+
+- name: run whole test
+  - shell:
+
